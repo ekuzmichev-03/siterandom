@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light Randomizer | Генератор чисел</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="logo">
+                <i class="fas fa-random"></i>
+                <h1>Light<span>Randomizer</span></h1>
+            </div>
+            <p class="tagline">Генератор случайных чисел</p>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Левая колонка - управление -->
+            <div class="control-section">
+                <div class="card">
+                    <h2><i class="fas fa-sliders-h"></i> Настройки диапазона</h2>
+                    
+                    <div class="range-inputs">
+                        <div class="input-group">
+                            <label for="min-value">
+                                <i class="fas fa-arrow-down"></i>
+                                Минимальное значение
+                            </label>
+                            <div class="input-with-buttons">
+                                <button class="input-btn minus" onclick="changeValue('min', -1)">-</button>
+                                <input type="number" id="min-value" value="1" min="-9999" max="9999">
+                                <button class="input-btn plus" onclick="changeValue('min', 1)">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="max-value">
+                                <i class="fas fa-arrow-up"></i>
+                                Максимальное значение
+                            </label>
+                            <div class="input-with-buttons">
+                                <button class="input-btn minus" onclick="changeValue('max', -1)">-</button>
+                                <input type="number" id="max-value" value="100" min="-9999" max="9999">
+                                <button class="input-btn plus" onclick="changeValue('max', 1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-presets">
+                        <h3>Быстрые диапазоны:</h3>
+                        <div class="preset-buttons">
+                            <button class="preset-btn" onclick="setRange(1, 10)">1-10</button>
+                            <button class="preset-btn" onclick="setRange(1, 50)">1-50</button>
+                            <button class="preset-btn" onclick="setRange(1, 100)">1-100</button>
+                            <button class="preset-btn" onclick="setRange(1, 1000)">1-1000</button>
+                            <button class="preset-btn" onclick="setRange(-100, 100)">-100...100</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2><i class="fas fa-history"></i> История генераций</h2>
+                    <div class="history-container">
+                        <div id="history-list" class="history-list">
+                            <!-- История будет здесь -->
+                        </div>
+                        <div id="history-empty" class="history-empty">
+                            <i class="fas fa-inbox"></i>
+                            <p>История генераций пуста</p>
+                            <p class="empty-sub">Сгенерируйте первое число!</p>
+                        </div>
+                    </div>
+                    <div class="history-controls">
+                        <button id="clear-history" class="secondary-btn">
+                            <i class="fas fa-trash"></i> Очистить историю
+                        </button>
+                        <button id="export-history" class="secondary-btn">
+                            <i class="fas fa-download"></i> Экспорт
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Правая колонка - результат -->
+            <div class="result-section">
+                <div class="result-card">
+                    <div class="result-header">
+                        <h2><i class="fas fa-dice"></i> Результат</h2>
+                        <div class="current-range">
+                            Текущий диапазон: <span id="current-range">1 - 100</span>
+                        </div>
+                    </div>
+                    
+                    <div class="result-display">
+                        <div class="result-label">Сгенерированное число:</div>
+                        <div id="result" class="result-number">—</div>
+                        <div class="result-annotation">
+                            <i class="fas fa-info-circle"></i>
+                            <span id="result-info">Нажмите кнопку ниже для генерации</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button id="generate-btn" class="primary-btn generate-btn">
+                            <i class="fas fa-bolt"></i> Сгенерировать число
+                        </button>
+                        <button id="generate-multiple" class="secondary-btn">
+                            <i class="fas fa-layer-group"></i> 5 чисел сразу
+                        </button>
+                        <button id="reset-all" class="secondary-btn reset-btn">
+                            <i class="fas fa-redo"></i> Сбросить всё
+                        </button>
+                    </div>
+                    
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="total-generated">0</div>
+                            <div class="stat-label">Всего сгенерировано</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="last-range">1-100</div>
+                            <div class="stat-label">Последний диапазон</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="average-number">—</div>
+                            <div class="stat-label">Среднее значение</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="info-card">
+                    <h3><i class="fas fa-lightbulb"></i> Как это работает</h3>
+                    <div class="info-content">
+                        <p>Этот генератор создаёт "случайные" числа в указанном вами диапазоне.</p>
+                        <ul>
+                            <li><strong>Предопределённая последовательность:</strong> Используется набор заранее заданных чисел для создания иллюзии случайности.</li>
+                            <li><strong>Адаптация к диапазону:</strong> Если предопределённое число не подходит, генерируется истинно случайное.</li>
+                            <li><strong>Полная история:</strong> Все результаты сохраняются и могут быть экспортированы.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Подвал -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logo">
+                        <i class="fas fa-random"></i> LightRandomizer
+                    </div>
+                    <p>Простой и удобный генератор чисел © 2023</p>
+                </div>
+                <div class="footer-right">
+                    <div class="version">Версия 2.0</div>
+                    <div class="generation-count">
+                        <i class="fas fa-bolt"></i>
+                        <span id="footer-count">0</span> генераций
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Модальное окно для нескольких чисел -->
+    <div id="multiple-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-layer-group"></i> 5 случайных чисел</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="multiple-results" class="multiple-results">
+                    <!-- 5 чисел появятся здесь -->
+                </div>
+                <div class="modal-actions">
+                    <button id="copy-multiple" class="secondary-btn">
+                        <i class="fas fa-copy"></i> Копировать все
+                    </button>
+                    <button id="regenerate-multiple" class="primary-btn">
+                        <i class="fas fa-sync"></i> Сгенерировать новые
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
